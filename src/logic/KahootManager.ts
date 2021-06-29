@@ -9,23 +9,20 @@ export default class KahootManager {
     console.log("err", error);
     return error;
   }
-  public static async flood(
-    pin: number,
-    amount: number,
-    name: string,
-    callback: (error: any) => any
-  ): Promise<any> {
-    try {
-      let error;
-      for (let i = 0; i < amount; i++) {
-        error = await this.joinClient(pin, `${name} ${i + 1}`);
-      }
+  public static flood(pin: number, amount: number, name: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let error;
+        for (let i = 0; i < amount; i++) {
+          error = await this.joinClient(pin, `${name} ${i + 1}`);
+        }
 
-      console.log(error);
-      return callback(error);
-    } catch (err) {
-      console.log(err);
-      return callback(err);
-    }
+        if (error) return reject(error);
+        else return resolve(error);
+      } catch (err) {
+        console.log(err);
+        return reject(err);
+      }
+    });
   }
 }

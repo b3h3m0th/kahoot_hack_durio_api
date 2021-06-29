@@ -23,12 +23,9 @@ app.post("/flood", async (req: Request, res: Response) => {
     const { pin, amount, name } = req.body;
     if (!pin || !amount || !name) return res.sendStatus(501);
 
-    await KahootManager.flood(pin, amount, name, (err) => {
-      console.log(err);
-      if (err) return res.sendStatus(501);
-      // artificial delay
-      else return setTimeout(() => res.sendStatus(200), 1000);
-    });
+    const floodError = await KahootManager.flood(pin, amount, name);
+    if (floodError) return res.sendStatus(501);
+    else return res.sendStatus(200);
   } catch (err) {
     console.log(err);
     return res.sendStatus(501);
