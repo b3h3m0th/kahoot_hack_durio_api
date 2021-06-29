@@ -3,30 +3,29 @@ import { sleep } from "../util/time";
 const Kahoot = require("kahoot.js-updated");
 
 export default class KahootManager {
-  public static clients: Array<any> = [];
-  public static async joinClient(pin: number, name: string): Promise<any> {
+  public static joinClient(pin: number, name: string): void {
     const client = new Kahoot();
-    await client.join(pin, name).catch((err) => err && "");
-    client.on("Joined", () => (client.joined = true));
-    this.clients.push(client);
+    const error = client.join(pin, name).catch((err) => err);
+    return error;
   }
   public static async flood(
     pin: number,
     amount: number,
-    name: string
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        [...new Array(amount)].forEach(async (_, i: number) => {
-          await this.joinClient(pin, `${name} ${i + 1}`);
-          sleep(1000);
-        });
+    name: string,
+    callback: (error: any) => any
+  ): Promise<any> {
+    try {
+      let error;
+      [...new Array(amount)].forEach((_, i: number) => {
+        error = this.joinClient(pin, `${name} ${i + 1}`);
+        sleep(1000);
+      });
 
-        resolve();
-      } catch (err) {
-        console.log(err);
-        return reject();
-      }
-    });
+      console.log(error);
+      return callback(error);
+    } catch (err) {
+      console.log(err);
+      return callback(err);
+    }
   }
 }
