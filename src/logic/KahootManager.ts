@@ -3,9 +3,10 @@ import { sleep } from "../util/time";
 const Kahoot = require("kahoot.js-updated");
 
 export default class KahootManager {
-  public static joinClient(pin: number, name: string): void {
+  public static async joinClient(pin: number, name: string): Promise<any> {
     const client = new Kahoot();
-    const error = client.join(pin, name).catch((err) => err);
+    const error = await client.join(pin, name).catch((err) => err);
+    console.log("err", error);
     return error;
   }
   public static async flood(
@@ -16,10 +17,9 @@ export default class KahootManager {
   ): Promise<any> {
     try {
       let error;
-      [...new Array(amount)].forEach((_, i: number) => {
-        error = this.joinClient(pin, `${name} ${i + 1}`);
-        sleep(1000);
-      });
+      for (let i = 0; i < amount; i++) {
+        error = await this.joinClient(pin, `${name} ${i + 1}`);
+      }
 
       console.log(error);
       return callback(error);
