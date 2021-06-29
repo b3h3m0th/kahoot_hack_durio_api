@@ -8,6 +8,7 @@ export default class KahootManager {
     const error = await client.join(pin, name).catch((err) => err);
     return error;
   }
+
   public static flood(pin: number, amount: number, name: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
