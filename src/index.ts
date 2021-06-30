@@ -21,7 +21,7 @@ app.get("/", (req: Request, res: Response) => {
 app.post("/flood", async (req: Request, res: Response) => {
   try {
     const { pin, amount, name } = req.body;
-    if (!pin || !amount || !name) return res.sendStatus(501);
+    if (!pin || !amount || name === undefined) return res.sendStatus(501);
 
     await KahootManager.flood(pin, amount, name);
     return res.sendStatus(200);
