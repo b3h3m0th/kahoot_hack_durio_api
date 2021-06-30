@@ -1,5 +1,3 @@
-import { sleep } from "../util/time";
-
 const Kahoot = require("kahoot.js-updated");
 
 export default class KahootManager {
