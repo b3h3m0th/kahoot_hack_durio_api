@@ -8,7 +8,7 @@ import { Request, Response } from "express";
 import KahootManager from "./logic/KahootManager";
 const app = express();
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 1234;
 
 app.use(express.json());
 app.use(cors("*"));
