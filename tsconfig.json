@@ -2,10 +2,10 @@
   "compilerOptions": {
     "target": "ESNext",
     "removeComments": true,
-    "outFile": "./build/build.js",
+    "outDir": "./build",
     "rootDir": "./src/",
     "moduleResolution": "node",
-    "module": "AMD"
+    "module": "ESNext"
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["./out.d.ts", "node_modules"]
