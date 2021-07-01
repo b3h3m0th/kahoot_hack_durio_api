@@ -5,7 +5,7 @@
     "outDir": "./build",
     "rootDir": "./src/",
     "moduleResolution": "node",
-    "module": "ESNext"
+    "module": "CommonJS"
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["./out.d.ts", "node_modules"]
