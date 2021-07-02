@@ -20,12 +20,28 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/flood", async (req: Request, res: Response) => {
   try {
-    const { pin, amount, name } = req.body;
+    const { pin, amount, name, visitorId } = req.body;
     if (!pin || !amount || name === undefined) return res.sendStatus(501);
 
-    await KahootManager.flood(pin, amount, name);
+    await KahootManager.flood(pin, amount, name, visitorId);
+    console.log(KahootManager.clients);
     return res.sendStatus(200);
   } catch (err) {
+    console.log(err);
+    return res.sendStatus(501);
+  }
+});
+
+app.post("/reject", async (req: Request, res: Response) => {
+  try {
+    const { visitorId } = req.body;
+    if (!visitorId) return res.sendStatus(501);
+
+    await KahootManager.reject(visitorId);
+    console.log(KahootManager.clients);
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
     return res.sendStatus(501);
   }
 });
