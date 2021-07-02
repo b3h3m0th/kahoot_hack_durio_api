@@ -10,6 +10,20 @@ export default class KahootManager {
   ): Promise<any> {
     const client = new Kahoot();
 
+    // Create Bot disconnecting/quiz ending handling
+    // client.on("Disconnect", (r) =>
+    //   this.clients.get(visitorId).length > 0
+    //     ? this.clients.set(
+    //         visitorId,
+    //         this.clients[visitorId].includes(client) &&
+    //           this.clients[visitorId].splice(
+    //             this.clients[visitorId].indexOf(client),
+    //             1
+    //           )
+    //       )
+    //     : this.clients.delete(visitorId)
+    // );
+
     this.clients.has(visitorId)
       ? this.clients.set(visitorId, [...this.clients.get(visitorId), client])
       : this.clients.set(visitorId, [client]);
