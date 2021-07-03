@@ -24,6 +24,13 @@ export default class KahootManager {
     //     : this.clients.delete(visitorId)
     // );
 
+    client.on("Disconnect", (reason) => {
+      console.log("Disconnected: " + reason);
+    });
+    client.on("QuizEnd", () => {
+      console.log("The quiz has ended.");
+    });
+
     this.clients.has(visitorId)
       ? this.clients.set(visitorId, [...this.clients.get(visitorId), client])
       : this.clients.set(visitorId, [client]);
