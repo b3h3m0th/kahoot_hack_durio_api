@@ -11,12 +11,16 @@ export default class KahootManager {
     visitorId: string
   ): Promise<any> {
     const client = new Kahoot();
-    await TrashCan.collect(visitorId, client);
+    await TrashCan.autoCollect(visitorId, client);
 
-    client.on("Disconnect", (r: any) =>
-      TrashCan.removeClient(visitorId, client)
+    client.on(
+      "Disconnect",
+      async (r: any) => await this.removeClient(visitorId, client)
     );
-    client.on("QuizEnd", (r: any) => TrashCan.removeClient(visitorId, client));
+    client.on(
+      "QuizEnd",
+      async (r: any) => await this.removeClient(visitorId, client)
+    );
 
     this.clients.has(visitorId)
       ? this.clients.set(visitorId, [...this.clients.get(visitorId), client])
@@ -25,6 +29,21 @@ export default class KahootManager {
     const error = await client.join(pin, name).catch((err) => err);
 
     return error;
+  }
+
+  public static removeClient(visitorId: string, client: any): void {
+    try {
+      client.leave();
+      const clients = this.clients.get(visitorId);
+      clients && clients.length > 1
+        ? this.clients.set(
+            visitorId,
+            clients.filter((c) => c.token !== client.token)
+          )
+        : this.clients.delete(visitorId);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   public static flood(
@@ -36,9 +55,8 @@ export default class KahootManager {
     return new Promise(async (resolve, reject) => {
       try {
         let error;
-        for (let i = 0; i < amount; i++) {
+        for (let i = 0; i < amount; i++)
           error = await this.joinClient(pin, `${name} ${i + 1}`, visitorId);
-        }
 
         if (error) return reject(error);
         else return resolve(error);
@@ -49,7 +67,7 @@ export default class KahootManager {
     });
   }
 
-  public static reject(visitorId: string) {
+  public static reject(visitorId: string): void {
     try {
       const clients = this.clients.get(visitorId);
       clients && clients.forEach((c: any, i: number) => c.leave());
