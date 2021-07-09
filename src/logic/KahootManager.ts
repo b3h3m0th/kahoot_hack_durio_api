@@ -2,9 +2,25 @@ import TrashCan from "./TrashCan";
 
 import * as Kahoot from "kahoot.js-updated";
 
+export enum OnEventAction {
+  disconnect = "disconnect",
+  reconnect = "reconnect",
+  none = "none",
+  answer = "answer",
+}
+
 export default class KahootManager {
   public static clients: Map<string, Array<any>> = new Map();
-  private static _removeEvents: Array<string> = ["Disconnect", "QuizEnd"];
+  public static events = {
+    [OnEventAction.disconnect]: [
+      "Disconnect",
+      "GameReset",
+      "QuizEnd",
+      // "Podium",
+      // "Feedback",
+    ],
+    [OnEventAction.answer]: ["QuestionStart"],
+  } as const;
 
   public static async joinClient(
     pin: number,
@@ -14,7 +30,7 @@ export default class KahootManager {
     const client = new Kahoot();
     await TrashCan.autoCollect(visitorId, client);
 
-    this._removeEvents.forEach((e: string) =>
+    this.events["disconnect"].forEach((e: string) =>
       client.on(e, async (r: any) => {
         await this.removeClient(visitorId, client);
         console.log(this.clients);
@@ -25,9 +41,7 @@ export default class KahootManager {
       ? this.clients.set(visitorId, [...this.clients.get(visitorId), client])
       : this.clients.set(visitorId, [client]);
 
-    const error = await client.join(pin, name).catch((err) => err);
-
-    return error;
+    return await client.join(pin, name).catch((err) => err);
   }
 
   public static removeClient(visitorId: string, client: any): void {
