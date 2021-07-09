@@ -1,3 +1,5 @@
+import TrashCan from "./TrashCan";
+
 const Kahoot = require("kahoot.js-updated");
 
 export default class KahootManager {
@@ -9,33 +11,19 @@ export default class KahootManager {
     visitorId: string
   ): Promise<any> {
     const client = new Kahoot();
+    await TrashCan.collect(visitorId, client);
 
-    // Create Bot disconnecting/quiz ending handling
-    // client.on("Disconnect", (r) =>
-    //   this.clients.get(visitorId).length > 0
-    //     ? this.clients.set(
-    //         visitorId,
-    //         this.clients[visitorId].includes(client) &&
-    //           this.clients[visitorId].splice(
-    //             this.clients[visitorId].indexOf(client),
-    //             1
-    //           )
-    //       )
-    //     : this.clients.delete(visitorId)
-    // );
-
-    client.on("Disconnect", (reason) => {
-      console.log("Disconnected: " + reason);
-    });
-    client.on("QuizEnd", () => {
-      console.log("The quiz has ended.");
-    });
+    client.on("Disconnect", (r: any) =>
+      TrashCan.removeClient(visitorId, client)
+    );
+    client.on("QuizEnd", (r: any) => TrashCan.removeClient(visitorId, client));
 
     this.clients.has(visitorId)
       ? this.clients.set(visitorId, [...this.clients.get(visitorId), client])
       : this.clients.set(visitorId, [client]);
 
     const error = await client.join(pin, name).catch((err) => err);
+
     return error;
   }
 
@@ -62,8 +50,12 @@ export default class KahootManager {
   }
 
   public static reject(visitorId: string) {
-    const clients = this.clients.get(visitorId);
-    clients.forEach((c: any, i: number) => c.leave());
-    this.clients.delete(visitorId);
+    try {
+      const clients = this.clients.get(visitorId);
+      clients && clients.forEach((c: any, i: number) => c.leave());
+      this.clients.delete(visitorId);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
