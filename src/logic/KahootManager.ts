@@ -1,6 +1,6 @@
 import TrashCan from "./TrashCan";
 
-const Kahoot = require("kahoot.js-updated");
+import * as Kahoot from "kahoot.js-updated";
 
 export default class KahootManager {
   public static clients: Map<string, Array<any>> = new Map();
@@ -25,7 +25,7 @@ export default class KahootManager {
       ? this.clients.set(visitorId, [...this.clients.get(visitorId), client])
       : this.clients.set(visitorId, [client]);
 
-    const error = await client.join(pin, name, false).catch((err) => err);
+    const error = await client.join(pin, name).catch((err) => err);
 
     return error;
   }
@@ -34,7 +34,7 @@ export default class KahootManager {
     try {
       client.leave();
       const clients = this.clients.get(visitorId);
-      clients && clients.length > 0
+      clients && clients.length > 1
         ? this.clients.set(
             visitorId,
             clients.filter((c) => c.clientId !== client.clientId)
