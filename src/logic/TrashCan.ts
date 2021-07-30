@@ -4,7 +4,7 @@ import KahootManager from "./KahootManager";
 // Needed tho since not implemented properly in the deprecated package and for safety reasons
 import config from "../config";
 export default class TrashCan {
-  private static _collectingTimeout: number = config.autoColletingTimout;
+  private static _collectingTimeout: number = config.autoCollectingTimeout;
 
   public static async autoCollect(
     visitorId: string,
